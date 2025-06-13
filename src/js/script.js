@@ -1,12 +1,11 @@
-'use strict';
+"use strict";
 
-// === Konfiguracja selektorów i szablonów ===
 const select = {
   templateOf: {
-    book: '#template-book',
+    book: "#template-book",
   },
   containerOf: {
-    bookList: '.books-list',
+    bookList: ".books-list",
   },
 };
 
@@ -16,10 +15,8 @@ const templates = {
   ),
 };
 
-// === Tablica ulubionych książek ===
 const favoriteBooks = [];
 
-// === Funkcja renderująca książki ===
 function renderBooks() {
   const bookList = document.querySelector(select.containerOf.bookList);
 
@@ -30,32 +27,30 @@ function renderBooks() {
   }
 }
 
-// === Funkcja do obsługi dwukliku i ulubionych ===
 function initActions() {
-  const bookImages = document.querySelectorAll('.book__image');
+  const bookList = document.querySelector(".books-list");
 
-  for (const image of bookImages) {
-    image.addEventListener('dblclick', function (event) {
-      event.preventDefault();
+  bookList.addEventListener("dblclick", function (event) {
+    event.preventDefault();
 
-      const bookId = this.getAttribute('data-id');
+    const clickedElement = event.target.offsetParent;
+
+    if (clickedElement.classList.contains("book__image")) {
+      const bookId = clickedElement.getAttribute("data-id");
 
       if (favoriteBooks.includes(bookId)) {
-        // Jeśli książka już jest ulubiona – usuń
-        this.classList.remove('favorite');
+        clickedElement.classList.remove("favorite");
         const index = favoriteBooks.indexOf(bookId);
         favoriteBooks.splice(index, 1);
       } else {
-        // Jeśli nie – dodaj
-        this.classList.add('favorite');
+        clickedElement.classList.add("favorite");
         favoriteBooks.push(bookId);
       }
 
-      console.log('Ulubione książki:', favoriteBooks);
-    });
-  }
+      console.log("Ulubione książki:", favoriteBooks);
+    }
+  });
 }
 
-// === Uruchomienie funkcji ===
 renderBooks();
 initActions();
