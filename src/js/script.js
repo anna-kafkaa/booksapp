@@ -1,6 +1,6 @@
 'use strict';
 
-// === Konfiguracja selektorów ===
+// === Konfiguracja selektorów i szablonów ===
 const select = {
   templateOf: {
     book: '#template-book',
@@ -10,7 +10,6 @@ const select = {
   },
 };
 
-// === Kompilacja szablonów ===
 const templates = {
   book: Handlebars.compile(
     document.querySelector(select.templateOf.book).innerHTML
@@ -20,7 +19,7 @@ const templates = {
 // === Tablica ulubionych książek ===
 const favoriteBooks = [];
 
-// === Funkcja renderująca książki na stronie ===
+// === Funkcja renderująca książki ===
 function renderBooks() {
   const bookList = document.querySelector(select.containerOf.bookList);
 
@@ -31,7 +30,7 @@ function renderBooks() {
   }
 }
 
-// === Funkcja inicjująca interakcje (ulubione) ===
+// === Funkcja do obsługi dwukliku i ulubionych ===
 function initActions() {
   const bookImages = document.querySelectorAll('.book__image');
 
@@ -42,10 +41,12 @@ function initActions() {
       const bookId = this.getAttribute('data-id');
 
       if (favoriteBooks.includes(bookId)) {
+        // Jeśli książka już jest ulubiona – usuń
         this.classList.remove('favorite');
         const index = favoriteBooks.indexOf(bookId);
         favoriteBooks.splice(index, 1);
       } else {
+        // Jeśli nie – dodaj
         this.classList.add('favorite');
         favoriteBooks.push(bookId);
       }
