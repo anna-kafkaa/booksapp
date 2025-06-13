@@ -1,6 +1,5 @@
 "use strict";
 
-// === Konfiguracja ===
 const select = {
   templateOf: {
     book: "#template-book",
@@ -19,22 +18,44 @@ const templates = {
 const favoriteBooks = [];
 const filters = [];
 
-// === Renderowanie książek ===
+// funkcja do stylowania tła ratingu
+function determineRatingBgc(rating) {
+  if (rating < 6) {
+    return "linear-gradient(to bottom,  #fefcea 0%, #f1da36 100%)";
+  } else if (rating <= 8) {
+    return "linear-gradient(to bottom, #b4df5b 0%,#b4df5b 100%)";
+  } else if (rating <= 9) {
+    return "linear-gradient(to bottom, #299a0b 0%, #299a0b 100%)";
+  } else {
+    return "linear-gradient(to bottom, #ff0084 0%,#ff0084 100%)";
+  }
+}
+
+// renderowanie książek
 function renderBooks() {
   const bookList = document.querySelector(select.containerOf.bookList);
 
   for (const book of dataSource.books) {
-    const generatedHTML = templates.book(book);
+    const ratingBgc = determineRatingBgc(book.rating);
+    const ratingWidth = book.rating * 10;
+
+    const bookData = {
+      ...book,
+      ratingBgc,
+      ratingWidth,
+    };
+
+    const generatedHTML = templates.book(bookData);
     const generatedDOM = utils.createDOMFromHTML(generatedHTML);
     bookList.appendChild(generatedDOM);
   }
 }
 
-// === Obsługa kliknięć (ulubione + filtry) ===
+// obsługa kliknięć i filtrów
 function initActions() {
   const bookList = document.querySelector(".books-list");
 
-  // Delegacja zdarzeń – dwuklik ulubionych
+  // delegacja zdarzeń - ulubione
   bookList.addEventListener("dblclick", function (event) {
     event.preventDefault();
 
@@ -56,7 +77,7 @@ function initActions() {
     }
   });
 
-  // Nasłuchiwacz na formularz filtrów
+  // obsługa checkboxów filtrujących
   const filtersForm = document.querySelector(".filters");
 
   filtersForm.addEventListener("click", function (event) {
@@ -75,12 +96,12 @@ function initActions() {
       }
 
       console.log("Aktywne filtry:", filters);
-      filterBooks(); // wywołanie filtrowania
+      filterBooks();
     }
   });
 }
 
-// === Filtrowanie książek ===
+// filtrowanie książek
 function filterBooks() {
   for (const book of dataSource.books) {
     let shouldBeHidden = false;
@@ -104,6 +125,6 @@ function filterBooks() {
   }
 }
 
-// === Start aplikacji ===
+// start
 renderBooks();
 initActions();
