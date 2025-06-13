@@ -1,5 +1,6 @@
 "use strict";
 
+// === Konfiguracja ===
 const select = {
   templateOf: {
     book: "#template-book",
@@ -16,7 +17,9 @@ const templates = {
 };
 
 const favoriteBooks = [];
+const filters = [];
 
+// === Renderowanie książek ===
 function renderBooks() {
   const bookList = document.querySelector(select.containerOf.bookList);
 
@@ -27,9 +30,11 @@ function renderBooks() {
   }
 }
 
+// === Obsługa kliknięć (ulubione + filtry) ===
 function initActions() {
   const bookList = document.querySelector(".books-list");
 
+  // Delegacja zdarzeń – dwuklik ulubionych
   bookList.addEventListener("dblclick", function (event) {
     event.preventDefault();
 
@@ -50,7 +55,55 @@ function initActions() {
       console.log("Ulubione książki:", favoriteBooks);
     }
   });
+
+  // Nasłuchiwacz na formularz filtrów
+  const filtersForm = document.querySelector(".filters");
+
+  filtersForm.addEventListener("click", function (event) {
+    if (
+      event.target.tagName === "INPUT" &&
+      event.target.type === "checkbox" &&
+      event.target.name === "filter"
+    ) {
+      const value = event.target.value;
+
+      if (event.target.checked) {
+        filters.push(value);
+      } else {
+        const index = filters.indexOf(value);
+        filters.splice(index, 1);
+      }
+
+      console.log("Aktywne filtry:", filters);
+      filterBooks(); // wywołanie filtrowania
+    }
+  });
 }
 
+// === Filtrowanie książek ===
+function filterBooks() {
+  for (const book of dataSource.books) {
+    let shouldBeHidden = false;
+
+    for (const filter of filters) {
+      if (!book.details[filter]) {
+        shouldBeHidden = true;
+        break;
+      }
+    }
+
+    const bookImage = document.querySelector(
+      `.book__image[data-id="${book.id}"]`
+    );
+
+    if (shouldBeHidden) {
+      bookImage.classList.add("hidden");
+    } else {
+      bookImage.classList.remove("hidden");
+    }
+  }
+}
+
+// === Start aplikacji ===
 renderBooks();
 initActions();
