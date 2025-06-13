@@ -1,36 +1,60 @@
-"use strict";
+'use strict';
 
-// 1. Kompilujemy szablon
+// === Konfiguracja selektorów ===
 const select = {
   templateOf: {
-    book: "#template-book",
+    book: '#template-book',
   },
   containerOf: {
-    bookList: ".books-list",
+    bookList: '.books-list',
   },
 };
 
+// === Kompilacja szablonów ===
 const templates = {
   book: Handlebars.compile(
     document.querySelector(select.templateOf.book).innerHTML
   ),
 };
 
-// 2. Tworzymy funkcję renderującą książki
+// === Tablica ulubionych książek ===
+const favoriteBooks = [];
+
+// === Funkcja renderująca książki na stronie ===
 function renderBooks() {
   const bookList = document.querySelector(select.containerOf.bookList);
 
   for (const book of dataSource.books) {
-    // Generujemy kod HTML na podstawie szablonu i danych książki
     const generatedHTML = templates.book(book);
-
-    // Tworzymy DOM z HTML-a
     const generatedDOM = utils.createDOMFromHTML(generatedHTML);
-
-    // Wstawiamy do listy książek
     bookList.appendChild(generatedDOM);
   }
 }
 
-// 3. Uruchamiamy funkcję
+// === Funkcja inicjująca interakcje (ulubione) ===
+function initActions() {
+  const bookImages = document.querySelectorAll('.book__image');
+
+  for (const image of bookImages) {
+    image.addEventListener('dblclick', function (event) {
+      event.preventDefault();
+
+      const bookId = this.getAttribute('data-id');
+
+      if (favoriteBooks.includes(bookId)) {
+        this.classList.remove('favorite');
+        const index = favoriteBooks.indexOf(bookId);
+        favoriteBooks.splice(index, 1);
+      } else {
+        this.classList.add('favorite');
+        favoriteBooks.push(bookId);
+      }
+
+      console.log('Ulubione książki:', favoriteBooks);
+    });
+  }
+}
+
+// === Uruchomienie funkcji ===
 renderBooks();
+initActions();
